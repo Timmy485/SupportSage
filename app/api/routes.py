@@ -1,7 +1,6 @@
 from flask import Blueprint, jsonify, request
 from sqlalchemy import and_, or_
 from app import limiter
-from app import database
 
 
 route_blueprint = Blueprint("api", __name__)
