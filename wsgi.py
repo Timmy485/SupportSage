@@ -2,9 +2,9 @@ from os import environ
 from app import create_app, database
 
 
-DEBUG = environ.get("DEBUG")
-HOST = environ.get("HOST")
-PORT = environ.get("PORT")
+DEBUG = environ.get("DEBUG", "True")
+HOST = environ.get("HOST", "0.0.0.0")
+PORT = int(environ.get("PORT", 5050))
 
 application = create_app()
 
