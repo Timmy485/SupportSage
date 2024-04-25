@@ -7,7 +7,7 @@ Support Sage empowers customer service representatives (CSRs) with the power of 
 ## Key Features:
 
 ### Sentiment Analysis: 
-- Analyzes incoming customer emails to identify sentiment (positive, negative, neutral) using Gemini Pro.
+- Analyzes incoming customer emails to identify sentiment (positive, negative, neutral) using GPT-4.
 
 ### Personalized Response Suggestions: 
 - Based on sentiment analysis, Gemini Pro suggests key points or draft content for tailored responses.
