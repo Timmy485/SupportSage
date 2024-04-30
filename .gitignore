@@ -3,3 +3,6 @@
 backend/client_secret.json
 backend/credentials.json
 backend/token.pickle
+backend/default.sqlite
+*.toml
+default.sqlite

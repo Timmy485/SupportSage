@@ -14,6 +14,7 @@ load_dotenv()
 
 app = Flask(__name__)
 app.secret_key = os.getenv("FLASK_SECRET_KEY")
+os.environ["OPENAI_API_KEY"] = os.environ.get("OPENAI_KEY")
 
 # REDIRECT_URI = os.environ.get("DEVELOPMENT_REDIRECT_URI")
 SCOPES = ['https://www.googleapis.com/auth/gmail.modify']
@@ -99,6 +100,9 @@ def read_emails():
     for email in unread_emails:
         service.users().messages().modify(userId='me', id=email['id'], body={'removeLabelIds': ['UNREAD']}).execute()
     
+    for email in unread_emails:
+        query = email.body
+
     return jsonify(unread_emails)
 
 if __name__ == "__main__":
