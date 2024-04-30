@@ -12,8 +12,7 @@ load_dotenv()
 ATLAS_CONNECTION_STRING = os.environ.get('ATLAS_URI')
 os.environ["OPENAI_API_KEY"] = os.environ.get("OPENAI_KEY")
 
-Settings.llm = OpenAI(model="gpt-4-turbo")
-top_k = 5
+
 
 def get_vector_index(): 
     db_name = "smart_solutions_db"

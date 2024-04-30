@@ -11,6 +11,14 @@ import pickle
 from bs4 import BeautifulSoup
 from googleapiclient.errors import HttpError
 import re
+import os, pymongo, pprint
+from llama_index.core import SimpleDirectoryReader, VectorStoreIndex, StorageContext
+from llama_index.core.settings import Settings
+from llama_index.core.retrievers import VectorIndexRetriever
+from llama_index.core.query_engine import RetrieverQueryEngine
+from llama_index.embeddings.openai import OpenAIEmbedding
+from llama_index.llms.openai import OpenAI
+from llama_index.vector_stores.mongodb import MongoDBAtlasVectorSearch
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -21,6 +29,8 @@ SCOPES = ['https://www.googleapis.com/auth/gmail.modify']
 current_dir = os.path.dirname(os.path.abspath(__file__))
 token_path = os.path.join(current_dir, 'token.pickle')
 credentials_path = os.path.join(current_dir, 'credentials.json')
+Settings.llm = OpenAI(model="gpt-4-turbo")
+top_k = 5
 
 @app.route('/')
 def index():
@@ -56,6 +66,10 @@ def get_gmail_service():
 def read_emails():
     service = get_gmail_service()
 
+    index = get_vector_index()
+    # Create a query engine with a default retriever
+    query_engine = index.as_query_engine(similarity_top_k=top_k, response_mode="refine")
+
     # request a list of all the messages 
     unread_messages = service.users().messages().list(userId='me', labelIds=['INBOX'], q='is:unread').execute()
 
@@ -88,14 +102,20 @@ def read_emails():
         clean_body = soup.get_text()
         clean_text = re.sub(r'\s+', ' ', clean_body)
         
+        response = query_engine.query(clean_text)
         unread_emails.append({
             'id': msg_id,
             'subject': subject,
             'from': from_email,
             'date': date_received,
             'snippet': email.get('snippet', ''),
-            'body': clean_text
+            'body': clean_text,
+            'response': response.response
         })
+
+
+        
+
     
     # Mark retrieved emails as read
     for email in unread_emails:
