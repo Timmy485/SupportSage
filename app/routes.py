@@ -1,5 +1,5 @@
 from app import app
-# from .helpers import create_index, retrieve_pipeline
+from .helpers import get_vector_index
 from flask import Flask, redirect, request, session, jsonify, url_for
 from google_auth_oauthlib.flow import Flow
 from google.auth.transport.requests import Request
