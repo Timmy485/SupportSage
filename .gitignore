@@ -6,3 +6,4 @@ backend/client_secret.json
 backend/default.sqlite
 *.toml
 default.sqlite
+.streamlit
