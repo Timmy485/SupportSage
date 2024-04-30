@@ -68,62 +68,60 @@ def read_emails():
 
     index = get_vector_index()
     # Create a query engine with a default retriever
-    query_engine = index.as_query_engine(similarity_top_k=top_k, response_mode="refine")
+    query_engine = index.as_query_engine(similarity_top_k=top_k)
 
-    # request a list of all the messages 
-    unread_messages = service.users().messages().list(userId='me', labelIds=['INBOX'], q='is:unread').execute()
+    if (
+        unread_messages := service.users()
+        .messages()
+        .list(userId='me', labelIds=['INBOX'], q='is:unread')
+        .execute()
+    ):
+        processed_emails = []
+        for message in unread_messages.get('messages', []):
+            msg_id = message['id']
+            email = service.users().messages().get(userId='me', id=msg_id, format='full').execute()
 
-    unread_emails = []
-    for message in unread_messages.get('messages', []):
-        msg_id = message['id']
-        email = service.users().messages().get(userId='me', id=msg_id, format='full').execute()
-        
-        headers = email.get('payload', {}).get('headers', [])
-        subject = next((header['value'] for header in headers if header['name'].lower() == 'subject'), 'No Subject')
-        from_email = next((header['value'] for header in headers if header['name'].lower() == 'from'), 'Unknown Sender')
-        date_received = next((header['value'] for header in headers if header['name'].lower() == 'date'), 'Unknown Date')
-        
-        # Extracting the body of the email
-        parts = email.get('payload', {}).get('parts', [])
-        body = ""
-        if parts:
-            for part in parts:
-                body += part.get('body', {}).get('data', '')
-        else:
-            body = email.get('payload', {}).get('body', {}).get('data', '')
-        
-        # Convert from base64 URL safe encoding to text
-        if body:
-            import base64
-            body = base64.urlsafe_b64decode(body).decode('utf-8')
-        
-        # Clean the body using BeautifulSoup if needed
-        soup = BeautifulSoup(body, 'html.parser')
-        clean_body = soup.get_text()
-        clean_text = re.sub(r'\s+', ' ', clean_body)
-        
-        response = query_engine.query(clean_text)
-        unread_emails.append({
-            'id': msg_id,
-            'subject': subject,
-            'from': from_email,
-            'date': date_received,
-            'snippet': email.get('snippet', ''),
-            'body': clean_text,
-            'response': response.response
-        })
+            headers = email.get('payload', {}).get('headers', [])
+            subject = next((header['value'] for header in headers if header['name'].lower() == 'subject'), 'No Subject')
+            from_email = next((header['value'] for header in headers if header['name'].lower() == 'from'), 'Unknown Sender')
+            date_received = next((header['value'] for header in headers if header['name'].lower() == 'date'), 'Unknown Date')
 
+            # Extracting the body of the email
+            parts = email.get('payload', {}).get('parts', [])
+            body = ""
+            if parts:
+                for part in parts:
+                    body += part.get('body', {}).get('data', '')
+            else:
+                body = email.get('payload', {}).get('body', {}).get('data', '')
 
-        
+            # Convert from base64 URL safe encoding to text
+            if body:
+                import base64
+                body = base64.urlsafe_b64decode(body).decode('utf-8')
 
-    
-    # Mark retrieved emails as read
-    for email in unread_emails:
-        service.users().messages().modify(userId='me', id=email['id'], body={'removeLabelIds': ['UNREAD']}).execute()
-    
+            # Clean the body using BeautifulSoup if needed
+            soup = BeautifulSoup(body, 'html.parser')
+            clean_body = soup.get_text()
+            clean_text = re.sub(r'\s+', ' ', clean_body)
 
-    return jsonify(unread_emails)
+            response = query_engine.query(clean_text)
+            processed_emails.append({
+                'id': msg_id,
+                'subject': subject,
+                'from': from_email,
+                'date': date_received,
+                'snippet': email.get('snippet', ''),
+                'body': clean_text,
+                'response': response.response
+            })
 
+        # Mark retrieved emails as read
+        for email in processed_emails:
+            service.users().messages().modify(userId='me', id=email['id'], body={'removeLabelIds': ['UNREAD']}).execute()
+
+        return jsonify(processed_emails)
+    return("No emails to process")
 
 @app.errorhandler(404)
 def not_found(e):
