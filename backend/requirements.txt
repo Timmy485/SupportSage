@@ -6,3 +6,4 @@ Flask
 python-dotenv
 llama-index-readers-web
 firecrawl-py
+google-auth-oauthlib
