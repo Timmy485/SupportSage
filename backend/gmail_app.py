@@ -22,7 +22,7 @@ SCOPES = ['https://www.googleapis.com/auth/gmail.modify']
 
 @app.route('/')
 def index():
-    return redirect(url_for('read_emails'))
+    return jsonify({'message': 'Flask application is running successfully!'})
 
 
 def get_gmail_service():
@@ -106,4 +106,4 @@ def read_emails():
     return jsonify(unread_emails)
 
 if __name__ == "__main__":
-    app.run(debug=True, port=5050)
+    app.run(debug=True, port=5000)
