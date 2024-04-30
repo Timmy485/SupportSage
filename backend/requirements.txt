@@ -1,0 +1,8 @@
+llama-index 
+llama-index-vector-stores-mongodb 
+llama-index-embeddings-openai 
+pymongo
+Flask
+python-dotenv
+llama-index-readers-web
+firecrawl-py
