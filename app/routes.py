@@ -110,12 +110,9 @@ def read_emails():
                 "snippet": email.get("snippet", ""),
                 "body": clean_text,
                 "response": response.response,
+                "is0pen": False
             }
         )
-
-    # Mark retrieved emails as read
-    # for email in processed_emails:
-    #     service.users().messages().modify(userId='me', id=email['id'], body={'removeLabelIds': ['UNREAD']}).execute()
 
     return jsonify(processed_emails)
 
