@@ -10,3 +10,4 @@ google-auth-oauthlib
 beautifulsoup4
 google-api-python-client
 llama-index-postprocessor-cohere-rerank
+flask-cors
