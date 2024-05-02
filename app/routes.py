@@ -170,8 +170,9 @@ def send_email():
             200,
         )
     except Exception as e:
-        print(f"Error sending message: {str(e)}")
-        return jsonify({f"error: Failed to send email with message:  {str(e)}"}), 500
+        error_message = f"Failed to send email with message: {str(e)}"
+        print(f"Error sending message: {error_message}")
+        return jsonify({"error": error_message}), 500
 
 
 @app.errorhandler(404)
