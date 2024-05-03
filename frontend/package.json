@@ -11,6 +11,8 @@
     "format": "prettier --write src/"
   },
   "dependencies": {
+    "@cloudinary/url-gen": "^1.19.0",
+    "@cloudinary/vue": "^1.12.1",
     "@tato30/vue-pdf": "^1.9.6",
     "@vueup/vue-quill": "^1.2.0",
     "axios": "^1.6.8",
