@@ -34,19 +34,19 @@ const documents = ref([
   {
     title: 'About Us and Services',
     duration: '2 min read',
-    source: './src/assets/pdfs/about_us_and_services.pdf',
+    source: 'src/assets/pdfs/about_us_and_services.pdf',
     isActive: true
   },
   {
     title: 'Terms and Conditions',
     duration: '2 min read',
-    source: './src/assets/pdfs/terms_and_conditions.pdf',
+    source: 'src/assets/pdfs/terms_and_conditions.pdf',
     isActive: false
   },
   {
     title: 'Pricing',
     duration: '2 min read',
-    source: './src/assets/pdfs/pricing.pdf',
+    source: 'src/assets/pdfs/pricing.pdf',
     isActive: false
   }
 ])
